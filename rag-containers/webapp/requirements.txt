@@ -1,0 +1,13 @@
+langchain
+langchain-community
+langchainhub
+langchain-chroma
+transformers
+langchain-huggingface
+flask
+unstructured
+gradio
+html2text
+selenium
+playwright
+discord

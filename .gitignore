@@ -1,0 +1,44 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+env/
+venv/
+ENV/
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Data files
+*.csv
+*.h5
+*.hdf5
+*.pkl
+*.json
+*.zip
+
+# Model files
+*.h5
+*.pt
+*.onnx
+*.tflite
+*.ckpt
+
+# Logs
+*.log
+*.out
+
+# Environment variables
+.env
+
+# Byte-compiled / optimized / DLL files
+*.egg
+*.egg-info/
+dist/
+build/
+data/
+.DS_Store
