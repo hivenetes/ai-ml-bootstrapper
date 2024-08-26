@@ -12,7 +12,7 @@ sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 sudo sed -i -e '/experimental/ s/^#//g' /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
 # Update package lists
-sudo apt-get update
+sudo apt-get update && sudo apt-get install upgrade -y
 
 # Install NVIDIA Container Toolkit
 sudo apt-get install -y nvidia-container-toolkit
