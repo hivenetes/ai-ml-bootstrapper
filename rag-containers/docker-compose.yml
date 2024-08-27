@@ -51,7 +51,7 @@ services:
 
 secrets:
   my_secret:
-    file: ./my_secret.txt
+    file: ./store_service/my_secret.txt
 
 networks:
   app_network:

@@ -47,19 +47,29 @@ web_docs = WebBaseLoader(links).load()
 web_docs = list(map(clean_html, web_docs))
 upsert_documents(web_docs, collection)
 
-def read_secret(secret_name):
-    """Reads the secret value from the secret file."""
-    secret_path = f"/run/secrets/{secret_name}"
-    with open(secret_path, 'r') as secret_file:
-        return secret_file.read().strip()
+def read_secrets(file_path):
+    """Reads secrets from a file and returns them as a dictionary."""
+    secrets = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            key, value = line.strip().split('=', 1)
+            secrets[key] = value
+    return secrets
 
 def download_files_from_do_spaces():
+    
+    # Path to the mounted secrets file
+    secrets_file_path = '/run/secrets/my_secret'
+
+    # Load secrets
+    secrets = read_secrets(secrets_file_path)
+
     session = boto3.session.Session()
     client = session.client('s3',
                         region_name='nyc3',
                         endpoint_url='https://nyc3.digitaloceanspaces.com',
-                        aws_access_key_id=read_secret('SPACES_KEY'),
-                        aws_secret_access_key=read_secret('SPACES_SECRET'))
+                        aws_access_key_id=secrets.get('SPACES_KEY'),
+                        aws_secret_access_key=secrets.get('SPACES_SECRET'))
 
     Path("pdfs").mkdir(parents=True, exist_ok=True)
 
