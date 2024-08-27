@@ -42,4 +42,3 @@ dist/
 build/
 data/
 .DS_Store
-rag-containers/store_service/my_secret.txt
