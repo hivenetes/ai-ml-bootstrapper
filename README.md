@@ -6,3 +6,6 @@ The AI/ML Bootstrapper project is a customizable and extensible framework design
 .
 └── rag-containers # Containerized RAG pipeline
 ```
+
+## Environment Variables
+After cloning the repo, update the my_secret.txt file with DO SPACES ACCESS_KEY and SPACES_SECRET values
