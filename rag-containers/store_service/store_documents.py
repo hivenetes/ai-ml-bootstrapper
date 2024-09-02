@@ -1,8 +1,10 @@
 import os
 import uuid
 import chromadb
-from langchain_community.document_loaders import WebBaseLoader, PyPDFDirectoryLoader
+import boto3
 import html2text
+from langchain_community.document_loaders import WebBaseLoader, PyPDFDirectoryLoader
+from pathlib import Path
 
 storage_path = os.getenv('CHROMADB_STORAGE_PATH', "/app/chromadb")
 client = chromadb.PersistentClient(path=storage_path)
@@ -45,13 +47,51 @@ web_docs = WebBaseLoader(links).load()
 web_docs = list(map(clean_html, web_docs))
 upsert_documents(web_docs, collection)
 
-# Load and process PDF documents
-pdf_directory = "/app/chromadb/pdfs/"
-if os.path.exists(pdf_directory):
-    pdf_docs = PyPDFDirectoryLoader(pdf_directory).load()
-    upsert_documents(pdf_docs, collection)
-else:
-    print(f"Warning: The directory '{pdf_directory}' does not exist.")
+def read_secrets(file_path):
+    """Reads secrets from a file and returns them as a dictionary."""
+    secrets = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            key, value = line.strip().split('=', 1)
+            secrets[key] = value
+    return secrets
+
+def download_files_from_do_spaces():
+    
+    # Path to the mounted secrets file
+    secrets_file_path = '/run/secrets/secret'
+
+    # Load secrets
+    secrets = read_secrets(secrets_file_path)
+
+    session = boto3.session.Session()
+    client = session.client('s3',
+                        region_name='nyc3',
+                        endpoint_url='https://nyc3.digitaloceanspaces.com',
+                        aws_access_key_id=secrets.get('DO_SPACES_KEY'),
+                        aws_secret_access_key=secrets.get('DO_SPACES_SECRET'))
+
+    Path("pdfs").mkdir(parents=True, exist_ok=True)
+
+    bucket_name = 'ai-ml-bootstrapper-assets'
+    for obj in client.list_objects_v2(Bucket=bucket_name)['Contents']:
+        file_name = obj['Key']
+        client.download_file(bucket_name, file_name, f'pdfs/{file_name}')
+
+def upload_files_to_vector_store():
+    # Load and process PDF documents
+    pdf_directory = "./pdfs"
+
+    if os.path.exists(pdf_directory):
+        pdf_docs = PyPDFDirectoryLoader(pdf_directory).load()
+        upsert_documents(pdf_docs, collection)
+    else:
+        print(f"Warning: The directory '{pdf_directory}' does not exist.")
+
+# Uncomment to test donwload assets
+if __name__ == "__main__":
+    download_files_from_do_spaces()
+    upload_files_to_vector_store()
 
 # Uncomment to query the collection
 # results = collection.query(

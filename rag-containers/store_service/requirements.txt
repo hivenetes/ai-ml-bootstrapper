@@ -7,3 +7,4 @@ langchain-huggingface
 html2text
 beautifulsoup4
 pypdf
+boto3
