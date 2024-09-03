@@ -23,10 +23,10 @@ sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Make the NVIDIA Container Toolkit installer script executable
-chmod +x webapp/nvidia-container-toolkit-install.sh
+chmod +x scripts/nvidia-ctk.sh
 
 # Run the NVIDIA Container Toolkit installer script
-webapp/nvidia-container-toolkit-install.sh
+scripts/nvidia-ctk.sh
 
 # Install Nvidia Docker package 
 sudo apt install -y nvidia-docker2
