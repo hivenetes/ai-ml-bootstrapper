@@ -38,9 +38,6 @@ sudo apt install -y nvidia-docker2
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 
-# Copy the secret.example.txt to secret.txt and update the DO_SPACES_KEY and DO_SPACES_SECRET values in secret.txt
-cp store_service/secret.example.txt store_service/secret.txt
-
 # Disable NVLink within the NVIDIA kernel module
 echo "options nvidia NVreg_NvLinkDisable=1" | sudo tee /etc/modprobe.d/nvidia-disablenvlink.conf
 
@@ -49,7 +46,3 @@ sudo update-initramfs -u
 
 # Reboot the system to apply the changes
 sudo reboot
-
-# After reboot, Navigate to the rag-containers directory and execute run.sh script
-cd ai-ml-bootstrapper/rag-containers
-./run.sh
