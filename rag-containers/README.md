@@ -1,7 +1,5 @@
 # Containerized RAG Pipeline
 
-## Prerequisite
-
 ### Set Environment Variables
 
 ```bash
@@ -13,10 +11,14 @@ DO_SPACES_SECRET=<update>
 #save and exit the file
 ```
 
+### Install Prerequisites
 ```bash
-# Install nvidia container toolkit
-./scripts/nvidia-ctk.sh
+# Install needed tools and libraries from prerequisites.sh
+./prerequisites.sh
+```
 
+### Run the application
+```bash
 # Spin up the containers
 export NIVIDA_RUNTIME=true
 ./run.sh
