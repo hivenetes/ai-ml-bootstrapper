@@ -3,12 +3,18 @@ import uuid
 import chromadb
 import boto3
 import html2text
-from langchain_community.document_loaders import WebBaseLoader, PyPDFDirectoryLoader
 from pathlib import Path
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import WebBaseLoader, PyPDFDirectoryLoader
+from langchain_community.embeddings.sentence_transformer import (
+    SentenceTransformerEmbeddings,
+)
+from chromadb.utils import embedding_functions
 
 storage_path = os.getenv('CHROMADB_STORAGE_PATH', "/app/chromadb")
 client = chromadb.PersistentClient(path=storage_path)
-collection = client.get_or_create_collection(name="gpudroplet_collection")
+sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+collection = client.get_or_create_collection(name="gpudroplet_collection", embedding_function=sentence_transformer_ef)
 
 links = ["https://www.digitalocean.com/products/gpu-droplets/"]
 
@@ -33,19 +39,34 @@ def clean_html(html):
         html.page_content = html.page_content.replace(old, new)
     return html
 
-def upsert_documents(docs, collection):
-    for doc in docs:
-        print(doc.page_content)
-        collection.upsert(
-            ids=[str(uuid.uuid4())],
-            metadatas=doc.metadata,
-            documents=doc.page_content
-        )
+def upsert_documents(docs):
+    texts = [doc.page_content for doc in docs]
 
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=100,
+        chunk_overlap=20
+    )
+
+    chunks = []
+    for text in texts:
+        chunks.extend(text_splitter.split_text(text))
+
+    embedding_model = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+    
+    ids = [str(uuid.uuid4()) for _ in chunks]
+    embeddings = embedding_model.embed_documents(chunks)
+    
+    collection.upsert(
+        ids=ids,
+        documents=chunks,
+        embeddings=embeddings
+    )
+        
 # Load and process web documents
-web_docs = WebBaseLoader(links).load()
-web_docs = list(map(clean_html, web_docs))
-upsert_documents(web_docs, collection)
+def upload_webpage_content_to_vector_store():
+    web_docs = WebBaseLoader(links).load()
+    web_docs = list(map(clean_html, web_docs))
+    upsert_documents(web_docs)
 
 def read_secrets(file_path):
     """Reads secrets from a file and returns them as a dictionary."""
@@ -57,11 +78,8 @@ def read_secrets(file_path):
     return secrets
 
 def download_files_from_do_spaces():
-    
-    # Path to the mounted secrets file
     secrets_file_path = '/run/secrets/secret'
 
-    # Load secrets
     secrets = read_secrets(secrets_file_path)
 
     session = boto3.session.Session()
@@ -78,20 +96,20 @@ def download_files_from_do_spaces():
         file_name = obj['Key']
         client.download_file(bucket_name, file_name, f'pdfs/{file_name}')
 
-def upload_files_to_vector_store():
-    # Load and process PDF documents
+def upload_pdf_files_to_vector_store():
     pdf_directory = "./pdfs"
 
     if os.path.exists(pdf_directory):
         pdf_docs = PyPDFDirectoryLoader(pdf_directory).load()
-        upsert_documents(pdf_docs, collection)
+        upsert_documents(pdf_docs)
     else:
         print(f"Warning: The directory '{pdf_directory}' does not exist.")
 
-# Uncomment to test donwload assets
+# Uncomment to test store documents
 if __name__ == "__main__":
     download_files_from_do_spaces()
-    upload_files_to_vector_store()
+    upload_webpage_content_to_vector_store()
+    upload_pdf_files_to_vector_store()
 
 # Uncomment to query the collection
 # results = collection.query(
