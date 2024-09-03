@@ -28,9 +28,6 @@ chmod +x webapp/nvidia-container-toolkit-install.sh
 # Run the NVIDIA Container Toolkit installer script
 webapp/nvidia-container-toolkit-install.sh
 
-# After installing Nvidia runtime toolkit, Set NVIDIA_RUNTIME envitonment variable to true
-export NVIDIA_RUNTIME=true
-
 # Install Nvidia Docker package 
 sudo apt install -y nvidia-docker2
 
