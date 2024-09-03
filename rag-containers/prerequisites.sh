@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Navigate to the rag-containers directory 
-cd ai-ml-bootstrapper/rag-containers
-
 # Remove conflicting Docker packages
 for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 
