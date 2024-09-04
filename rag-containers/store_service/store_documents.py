@@ -49,7 +49,7 @@ def read_secrets(file_path):
     return secrets
 
 def download_files_from_do_spaces():
-    secrets_file_path = '/run/secrets/secret'
+    secrets_file_path = '/run/secrets/spaces_cfg'
 
     secrets = read_secrets(secrets_file_path)
 

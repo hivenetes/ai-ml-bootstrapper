@@ -35,6 +35,10 @@ docker compose version
 # scripts/nvidia-ctk.sh
 
 # # Install Nvidia Docker package 
+## Note: The primary issue has to do with the GPU driver. The GPU driver has components that run in kernel space and other components that run in user space. 
+## The implication of this is that for successful usage in docker, these components (user-space: inside the container, kernel space: outside the container) must match.
+## That is a key function for the NVIDIA container toolkit/container runtime that augments docker: 
+## To make whatever is inside the container pertaining to the GPU driver match whatever is outside the container.
 # sudo apt install -y nvidia-docker2
 
 # # Reload daemon and restart Docker
