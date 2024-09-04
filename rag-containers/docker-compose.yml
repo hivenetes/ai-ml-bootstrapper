@@ -31,7 +31,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"      
     secrets:
-      - spaces_secret
+      - spaces_cfg
 
   web:
     build:
@@ -50,8 +50,8 @@ services:
       - "host.docker.internal:host-gateway"
 
 secrets:
-  spaces_secret:
-    file: ./store_service/secret.txt
+  spaces_cfg:
+    file: ./store_service/spaces.cfg
 
 networks:
   app_network:
