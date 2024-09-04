@@ -42,4 +42,4 @@ dist/
 build/
 data/
 .DS_Store
-secret.txt
+spaces.cfg

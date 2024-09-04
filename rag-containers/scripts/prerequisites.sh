@@ -1,8 +1,15 @@
 #!/bin/bash
 
+# To be enabled with the new GPU Droplet base image
+# Manually install docker compose
+# DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+# mkdir -p $DOCKER_CONFIG/cli-plugins
+# curl -SL https://github.com/docker/compose/releases/download/v2.29.2/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+# chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+# docker compose version
+
 # Remove conflicting Docker packages
 for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
-
 # Update package list and install necessary packages
 sudo apt-get update
 sudo apt-get install -y ca-certificates curl
@@ -25,7 +32,7 @@ chmod +x scripts/nvidia-ctk.sh
 # Run the NVIDIA Container Toolkit installer script
 scripts/nvidia-ctk.sh
 
-# Install Nvidia Docker package 
+# Install Nvidia Docker package
 sudo apt install -y nvidia-docker2
 
 # Reload daemon and restart Docker
