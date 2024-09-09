@@ -1,7 +1,5 @@
 # GIF Generator
 
-## Project Description
-
 The GIF Generator is a Python-based application that allows users to generate animated GIFs from text prompts. Users can enter a single prompt or multiple prompts separated by semicolons (`;`). The application uses the `diffusers` library to generate images based on the provided prompts and then combines these images into an animated GIF.
 
 ## Features
