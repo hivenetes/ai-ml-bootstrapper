@@ -17,7 +17,7 @@ def get_animated_gif(prompts):
     previous_image = None
     for prompt in prompts:
         if previous_image is not None:
-            image = img_to_img_pipe(prompt=prompt, image=previous_image, num_inference_steps=28, strength=0.95, guidance_scale=0.5, generator=torch.Generator(device).manual_seed(42)).images[0]
+            image = img_to_img_pipe(prompt=prompt, image=previous_image, num_inference_steps=50, strength=0.95, guidance_scale=7.5, generator=torch.Generator(device).manual_seed(42)).images[0]
         else:
             image = text_to_img_pipe(prompt, num_inference_steps=50, guidance_scale=7.5, generator=torch.Generator(device).manual_seed(42)).images[0]
         images.append(image)
