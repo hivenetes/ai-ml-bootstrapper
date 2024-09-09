@@ -1,4 +1,6 @@
-#Gifs
 diffusers
 gradio
 accelerate
+transformers
+sentencepiece
+protobuf
