@@ -1,13 +1,22 @@
 import gradio as gr
-from multi_prompt_gif_creator import get_animated_gif
+import multi_prompt_gif_creator
+import single_prompt_multiple_images_gif_creator
+
+def get_gif_image(prompt):
+    prompts_list = prompt.split(";")
+    
+    if len(prompts_list) == 1:
+        return single_prompt_multiple_images_gif_creator.get_animated_gif(prompt)
+    else:
+        return multi_prompt_gif_creator.get_animated_gif(prompts_list)
 
 with gr.Blocks() as demo:
-    prompt = gr.Textbox(label="Enter your prompts seperated by semicolon (;)")
-    examples = gr.Examples([["A beautiful sunset over the mountains; A sunset over the ocean; A sunset with colorful clouds; A sunset with a red sky"]], prompt)
+    prompt = gr.Textbox(label="Enter single prompt or multiple prompts seperated by semicolon(;)")
+    examples = gr.Examples(["A beautiful sunset", "Road in a forest"], prompt)
 
     image = gr.Image(label="Generated Gif", width=500, height=500)
     generate_button = gr.Button("Generate Gif")
 
-    generate_button.click(fn=get_animated_gif, inputs=prompt, outputs=image)
+    generate_button.click(fn=get_gif_image, inputs=prompt, outputs=image)
 
 demo.launch()
