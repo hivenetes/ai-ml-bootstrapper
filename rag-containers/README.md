@@ -22,7 +22,7 @@ Use the following command to create a GPU droplet in the `TOR1` datacenter, equi
 ```bash
 doctl compute droplet create <droplet-name> \
     --region tor1 \
-    --image mliab-single-gpu \
+    --image 164081218 \
     --size gpu-h100x1-80gb \
     --ssh-keys <ssh::fingerprint>
 ```
