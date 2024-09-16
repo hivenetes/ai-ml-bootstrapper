@@ -1,11 +1,10 @@
 import torch
 from PIL import Image
 from diffusers import FluxPipeline
-from diffusers import StableDiffusionPipeline
+from diffusers import DiffusionPipeline
 from pathlib import Path
 
 def get_animated_gif(model_choice, prompt, num_inference_steps, guidance_scale, seed):
-    # Set the seed for reproducibility
     torch.manual_seed(seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
@@ -13,10 +12,9 @@ def get_animated_gif(model_choice, prompt, num_inference_steps, guidance_scale, 
         text_to_img_pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16)
         text_to_img_pipe.enable_model_cpu_offload()
     else:
-        text_to_img_pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16)
-        text_to_img_pipe = text_to_img_pipe.to(device)
-        
-    # Generate images
+        text_to_img_pipe = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, use_safetensors=True, variant="fp16")
+        text_to_img_pipe.to(device)
+
     generated_images = text_to_img_pipe(
         prompt=prompt,
         num_images_per_prompt=4,

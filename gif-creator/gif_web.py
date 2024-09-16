@@ -51,9 +51,9 @@ with gr.Blocks() as demo:
             guidance_scale = gr.Slider(
                 label="Guidance Scale",
                 minimum=0.0,
-                maximum=1.0,
-                value=0.5,
-                step=0.1
+                maximum=10.0,
+                value=7.5,
+                step=1.0
             )
             seed = gr.Number(
                 label="Seed",

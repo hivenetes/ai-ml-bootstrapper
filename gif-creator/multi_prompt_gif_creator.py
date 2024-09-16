@@ -2,7 +2,7 @@ import torch
 from PIL import Image
 from diffusers import FluxPipeline
 from diffusers import FluxImg2ImgPipeline
-from diffusers import StableDiffusionPipeline
+from diffusers import DiffusionPipeline
 from pathlib import Path
 
 def get_animated_gif(model_choice, prompts, num_inference_steps, guidance_scale, seed):
@@ -37,17 +37,29 @@ def get_animated_gif(model_choice, prompts, num_inference_steps, guidance_scale,
             images.append(image)
             previous_image = image  # Update the previous image
     else:
-        text_to_img_pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16)
-        text_to_img_pipe = text_to_img_pipe.to(device)
-        
+        pipe = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, use_safetensors=True, variant="fp16")
+        pipe.to(device)
+
+        previous_image = None
         for prompt in prompts:
-            image = text_to_img_pipe(
-                        prompt, 
-                        num_inference_steps=num_inference_steps, 
-                        guidance_scale=guidance_scale, 
-                        generator=torch.Generator(device).manual_seed(seed)
-                        ).images[0]
+            if previous_image is not None:
+                image = pipe(
+                    prompt=prompt, 
+                    image=previous_image, 
+                    num_inference_steps=num_inference_steps, 
+                    strength=0.95, 
+                    guidance_scale=guidance_scale, 
+                    generator=torch.Generator(device).manual_seed(seed)
+                    ).images[0]
+            else:
+                image = pipe(
+                    prompt, 
+                    num_inference_steps=num_inference_steps, 
+                    guidance_scale=guidance_scale, 
+                    generator=torch.Generator(device).manual_seed(seed)
+                    ).images[0]
             images.append(image)
+            previous_image = image  # Update the previous image        
 
     Path("images").mkdir(parents=True, exist_ok=True)
 
