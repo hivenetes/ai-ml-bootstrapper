@@ -2,26 +2,52 @@ import torch
 from PIL import Image
 from diffusers import FluxPipeline
 from diffusers import FluxImg2ImgPipeline
+from diffusers import StableDiffusionPipeline
 from pathlib import Path
 
-def get_animated_gif(prompts):
+def get_animated_gif(model_choice, prompts, num_inference_steps, guidance_scale, seed):
     images = []
-
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    img_to_img_pipe = FluxImg2ImgPipeline.from_pretrained("black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16)
-    img_to_img_pipe = img_to_img_pipe.to(device)
 
-    text_to_img_pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16)
-    text_to_img_pipe.enable_model_cpu_offload()
+    if(model_choice == "Flux"):
+        img_to_img_pipe = FluxImg2ImgPipeline.from_pretrained("black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16)
+        img_to_img_pipe = img_to_img_pipe.to(device)
 
-    previous_image = None
-    for prompt in prompts:
-        if previous_image is not None:
-            image = img_to_img_pipe(prompt=prompt, image=previous_image, num_inference_steps=50, strength=0.95, guidance_scale=7.5, generator=torch.Generator(device).manual_seed(42)).images[0]
-        else:
-            image = text_to_img_pipe(prompt, num_inference_steps=50, guidance_scale=7.5, generator=torch.Generator(device).manual_seed(42)).images[0]
-        images.append(image)
-        previous_image = image  # Update the previous image
+        text_to_img_pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16)
+        text_to_img_pipe.enable_model_cpu_offload()
+
+        previous_image = None
+        for prompt in prompts:
+            if previous_image is not None:
+                image = img_to_img_pipe(
+                    prompt=prompt, 
+                    image=previous_image, 
+                    num_inference_steps=num_inference_steps, 
+                    strength=0.95, 
+                    guidance_scale=guidance_scale, 
+                    generator=torch.Generator(device).manual_seed(seed)
+                    ).images[0]
+            else:
+                image = text_to_img_pipe(
+                    prompt, 
+                    num_inference_steps=num_inference_steps, 
+                    guidance_scale=guidance_scale, 
+                    generator=torch.Generator(device).manual_seed(seed)
+                    ).images[0]
+            images.append(image)
+            previous_image = image  # Update the previous image
+    else:
+        text_to_img_pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16)
+        text_to_img_pipe = text_to_img_pipe.to(device)
+        
+        for prompt in prompts:
+            image = text_to_img_pipe(
+                        prompt, 
+                        num_inference_steps=num_inference_steps, 
+                        guidance_scale=guidance_scale, 
+                        generator=torch.Generator(device).manual_seed(seed)
+                        ).images[0]
+            images.append(image)
 
     Path("images").mkdir(parents=True, exist_ok=True)
 
