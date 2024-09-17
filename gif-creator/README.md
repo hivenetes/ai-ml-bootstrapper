@@ -52,6 +52,8 @@ doctl compute droplet create <droplet-name> \
 
 It is recommended to create a virtual environment to manage dependencies.
 
+```apt install python3.10-venv```
+
 ```python3 -m venv venv```
 
 ```source venv/bin/activate```  # On Windows, use `venv\Scripts\activate`
@@ -63,6 +65,10 @@ Install the required Python packages using `pip`.
 
 ```pip install -r requirements.txt```
 
+### 5. Huggingface Cli Login
+
+Create a token in Hugginface and provide when below command is executed   
+```huggingface-cli login```
 
 ## Usage
 
