@@ -9,19 +9,6 @@ error_exit() {
     exit 1
 }
 
-# Clone the repository
-REPO_URL="https://github.com/hivenetes/ai-ml-bootstrapper"
-TARGET_DIR="ai-ml-bootstrapper/gif-creator"
-echo "Cloning repository from $REPO_URL..."
-if [ -d "$TARGET_DIR" ]; then
-    echo "Directory $TARGET_DIR already exists. Skipping clone."
-else
-    git clone "$REPO_URL" || error_exit "Failed to clone repository."
-fi
-
-# Navigate into the gif-creator project directory
-cd "$TARGET_DIR" || error_exit "Directory $TARGET_DIR does not exist."
-
 # Install Python3 venv if not installed
 echo "Checking for Python3 venv..."
 if ! dpkg -l | grep -q python3-venv; then
