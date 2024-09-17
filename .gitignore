@@ -43,3 +43,4 @@ build/
 data/
 .DS_Store
 spaces.cfg
+gif-creator/images

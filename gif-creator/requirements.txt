@@ -1,0 +1,6 @@
+git+https://github.com/huggingface/diffusers.git
+gradio
+accelerate
+transformers
+sentencepiece
+protobuf
