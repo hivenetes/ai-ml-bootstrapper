@@ -29,7 +29,7 @@ Use the following command to create a GPU droplet in the `TOR1` datacenter, equi
 ```bash
 doctl compute droplet create <droplet-name> \
     --region tor1 \
-    --image mliab-single-gpu \
+    --image 164081218 \
     --size gpu-h100x1-80gb \
     --ssh-keys <ssh::fingerprint>
 ```
@@ -44,7 +44,7 @@ doctl compute droplet create <droplet-name> \
         - [Important]: This steps involves reboot of the VM
 3. Clone the repository:
     ```bash
-    git clone -b feat/gif-creator https://github.com/hivenetes/ai-ml-bootstrapper.git
+    git clone https://github.com/hivenetes/ai-ml-bootstrapper.git
     cd ai-ml-bootstrapper/gif-creator
     ```
 
@@ -52,7 +52,7 @@ doctl compute droplet create <droplet-name> \
 
 It is recommended to create a virtual environment to manage dependencies.
 
-```python -m venv venv```
+```python3 -m venv venv```
 
 ```source venv/bin/activate```  # On Windows, use `venv\Scripts\activate`
 
@@ -70,7 +70,7 @@ Install the required Python packages using `pip`.
 
 To run the application, execute the following command:
 
-```python gif_web.py```
+```python3 gif_web.py```
 
 
 This will launch the Gradio interface in your default web browser.
