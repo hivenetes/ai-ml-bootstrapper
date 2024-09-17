@@ -2,7 +2,7 @@ import gradio as gr
 import multi_prompt_gif_creator
 import single_prompt_multiple_images_gif_creator
 
-def get_gif_image(model_choice, prompt, num_inference_steps, guidance_scale, seed):
+def get_gif_image(model_choice, prompt, num_inference_steps, guidance_scale, seed, num_images):
     prompts_list = prompt.split(";")
     
     prompts_list = [p.strip() for p in prompts_list if p.strip()]
@@ -10,7 +10,7 @@ def get_gif_image(model_choice, prompt, num_inference_steps, guidance_scale, see
         raise gr.Error("Invalid input: The prompt should not be empty or contain only separators.")
     else:
         if len(prompts_list) == 1:
-            return single_prompt_multiple_images_gif_creator.get_animated_gif(model_choice, prompt, num_inference_steps, guidance_scale, seed)
+            return single_prompt_multiple_images_gif_creator.get_animated_gif(model_choice, prompt, num_inference_steps, guidance_scale, seed, num_images)
         else:
             return multi_prompt_gif_creator.get_animated_gif(model_choice, prompts_list, num_inference_steps, guidance_scale, seed)
 
@@ -60,6 +60,13 @@ with gr.Blocks() as demo:
                 value=42,
                 precision=0
             )
+            num_images = gr.Slider(
+                label="Number of Images",
+                minimum=1,
+                maximum=10,
+                value=4,
+                step=1
+            )
             generate_button = gr.Button("Generate GIF", variant="primary")
 
         with gr.Column(scale=1, min_width=500):
@@ -67,7 +74,7 @@ with gr.Blocks() as demo:
 
     generate_button.click(
         fn=get_gif_image,
-        inputs=[model_choice, prompt, num_inference_steps, guidance_scale, seed],
+        inputs=[model_choice, prompt, num_inference_steps, guidance_scale, seed, num_images],
         outputs=image
     )
 

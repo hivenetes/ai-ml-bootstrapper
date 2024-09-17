@@ -4,7 +4,7 @@ from diffusers import FluxPipeline
 from diffusers import DiffusionPipeline
 from pathlib import Path
 
-def get_animated_gif(model_choice, prompt, num_inference_steps, guidance_scale, seed):
+def get_animated_gif(model_choice, prompt, num_inference_steps, guidance_scale, seed, num_images):
     torch.manual_seed(seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
@@ -17,7 +17,7 @@ def get_animated_gif(model_choice, prompt, num_inference_steps, guidance_scale, 
 
     generated_images = text_to_img_pipe(
         prompt=prompt,
-        num_images_per_prompt=4,
+        num_images_per_prompt=num_images,
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale
     ).images
