@@ -1,22 +1,11 @@
 import gradio as gr
-import multi_prompt_gif_creator
-import single_prompt_multiple_images_gif_creator
-import single_prompt_single_image_gif_creator
+import image_to_gif_creator
 
-def get_gif_image(model_choice, prompt, num_inference_steps, guidance_scale, seed, num_images):
-    prompts_list = prompt.split(";")
-    
-    prompts_list = [p.strip() for p in prompts_list if p.strip()]
-    if not prompts_list:
-        raise gr.Error("Invalid input: The prompt should not be empty or contain only separators.")
+def get_gif_image(prompt, num_inference_steps, guidance_scale, seed):
+    if not prompt:
+        raise gr.Error("Invalid input: The prompt should not be empty")
     else:
-        if len(prompts_list) == 1:
-            if num_images == 1:
-                return single_prompt_single_image_gif_creator.predict(model_choice, prompt, num_inference_steps, guidance_scale, seed)
-            else:
-                return single_prompt_multiple_images_gif_creator.get_animated_gif(model_choice, prompt, num_inference_steps, guidance_scale, seed, num_images)
-        else:
-            return multi_prompt_gif_creator.get_animated_gif(model_choice, prompts_list, num_inference_steps, guidance_scale, seed)
+        return image_to_gif_creator.generateGif(prompt, num_inference_steps, guidance_scale, seed)
 
 css="""
 #col-container {
@@ -29,26 +18,21 @@ css="""
 with gr.Blocks(css=css) as demo:
     gr.Markdown(
         """
-        # GIF Generator
+        # Animated GIF Generator
         """
     )
 
     with gr.Row():
         with gr.Column(scale=2):
-            model_choice = gr.Dropdown(
-                label="Choose Model",
-                choices=["Flux", "Stable Diffusion"],
-                value="Flux"
-            )
             prompt = gr.Textbox(
-                label="Enter single prompt or multiple prompts separated by semicolon (;)",
-                placeholder="e.g., A beautiful sunset; A sunset over the ocean",
-                lines=3
+                label="Enter prompt",
+                placeholder="e.g., An animated panda dancing"
             )
             examples = gr.Examples(
                 examples=[
-                    "A beautiful sunset",
-                    "A beautiful sunset over the mountains; A sunset over the ocean; A sunset with colorful clouds; A sunset with a red sky"
+                    "An animated castle with clouds",
+                    "An animated panda dancing",
+                    "An animated tortoise crossing the road"
                 ],
                 inputs=prompt,
                 label="Examples"
@@ -64,20 +48,13 @@ with gr.Blocks(css=css) as demo:
                 label="Guidance Scale",
                 minimum=0.0,
                 maximum=10.0,
-                value=3.5,
+                value=7.5,
                 step=0.5
             )
             seed = gr.Number(
                 label="Seed",
-                value=0,
+                value=42,
                 precision=0
-            )
-            num_images = gr.Slider(
-                label="Number of Images",
-                minimum=1,
-                maximum=10,
-                value=4,
-                step=1
             )
             generate_button = gr.Button("Generate GIF", variant="primary")
 
@@ -86,7 +63,7 @@ with gr.Blocks(css=css) as demo:
 
     generate_button.click(
         fn=get_gif_image,
-        inputs=[model_choice, prompt, num_inference_steps, guidance_scale, seed, num_images],
+        inputs=[prompt, num_inference_steps, guidance_scale, seed],
         outputs=image
     )
 

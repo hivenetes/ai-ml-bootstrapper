@@ -4,3 +4,4 @@ accelerate
 transformers
 sentencepiece
 protobuf
+moviepy
