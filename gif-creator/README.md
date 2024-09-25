@@ -79,7 +79,7 @@ This will launch the Gradio interface in your default web browser.
 
 ### Using the Interface
 
-1. **Enter Prompt**: Enter a single prompt or multiple prompts separated by semicolons (`;`).
+1. **Enter Prompt**: Enter a prompt in textbox.
 2. **Examples**: Click on the examples to auto-fill the prompt textbox.
 3. **Generate GIF**: Click the "Generate GIF" button to generate and display the animated GIF.
 
