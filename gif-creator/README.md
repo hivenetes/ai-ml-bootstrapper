@@ -1,13 +1,11 @@
-# GIF Generator
+# GIF Creator
 
-The GIF Generator is a Python-based application that allows users to generate animated GIFs from text prompts. Users can enter a single prompt or multiple prompts separated by semicolons (`;`). The application uses the `diffusers` library to generate images based on the provided prompts and then combines these images into an animated GIF.
+This project is part of the [AI/ML Bootstrapper](https://github.com/hivenetes/ai-ml-bootstrapper) repository, designed to help users easily create GIFs from a single prompt. The GIF Creator module offers a simple way to generate animated GIFs using image generation, image to video generation and finally video to Gif images.
 
 ## Features
 
-- Generate GIFs from single or multiple text prompts.
-- User-friendly interface built with Gradio.
-- Examples provided for easy usage.
-- Uses State of the art Flux model for image generation
+- Single prompt to create Gif
+- Change Number of Inference steps, Guidance scale, Seed to adjust Image creation
 
 ## Installation
 
@@ -29,7 +27,7 @@ Use the following command to create a GPU droplet in the `TOR1` datacenter, equi
 ```bash
 doctl compute droplet create <droplet-name> \
     --region tor1 \
-    --image 164081218 \
+    --image gpu-h100x1-base \
     --size gpu-h100x1-80gb \
     --ssh-keys <ssh::fingerprint>
 ```
@@ -40,9 +38,7 @@ doctl compute droplet create <droplet-name> \
     ```bash
     ssh root@<gpu-droplet-ip>
     ```
-2. Run the `./scripts/prerequisites.sh` script (this script ensures GPU availability for the application).
-        - [Important]: This steps involves reboot of the VM
-3. Clone the repository:
+2. Clone the repository:
     ```bash
     git clone https://github.com/hivenetes/ai-ml-bootstrapper.git
     cd ai-ml-bootstrapper/gif-creator
