@@ -30,6 +30,8 @@ def generateGif(prompt, num_inference_steps, guidance_scale, seed):
         generator=torch.Generator(device).manual_seed(seed)
     ).images[0]
 
+    os.makedirs("outputs", exist_ok=True)
+
     generated_image.save("outputs/generated_image.png")
     resized_image = resize_image(generated_image)
     video_path = generateVideo(resized_image)
