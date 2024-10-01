@@ -8,8 +8,7 @@ Before starting, ensure you have the following:
 
 - A [DigitalOcean account](https://cloud.digitalocean.com/registrations/new).
 - `doctl` CLI installed. Follow the [installation guide](https://docs.digitalocean.com/reference/doctl/how-to/install/).
-- Run the `./scripts/prerequisites.sh` script to install dependencies (this script installs any required tools and libraries).
-        - [Important]: This steps involves reboot of the VM
+- Run the `./scripts/prerequisites.sh` script to install nvidia docker dependencies.
 
 > **Note**: These steps are platform-agnostic and should work on any OS with minor adjustments.
 
@@ -22,7 +21,7 @@ Use the following command to create a GPU droplet in the `TOR1` datacenter, equi
 ```bash
 doctl compute droplet create <droplet-name> \
     --region tor1 \
-    --image 164081218 \
+    --image gpu-h100x1-base \
     --size gpu-h100x1-80gb \
     --ssh-keys <ssh::fingerprint>
 ```
