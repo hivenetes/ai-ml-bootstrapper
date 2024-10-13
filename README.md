@@ -1,6 +1,6 @@
 # AI/ML Bootstrapper
 
-The AI/ML Bootstrapper is a quickstart guide incorporating modern best practices for running AI/ML workloads on DigitalOcean.
+The AI/ML Bootstrapper offers a quick start guide to efficiently deploy AI/ML workloads on DigitalOcean. It features demos and best practices tailored for modern ML workflows.
 
 ``` bash
 # Each sub-directory is a standalone project
