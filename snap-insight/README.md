@@ -22,8 +22,8 @@ This project is a web application that allows users to upload images, generate c
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/bnarasimha/SnapInsight.git
-    cd SnapInsight
+    git clone https://github.com/hivenetes/ai-ml-bootstrapper/tree/main/snap-insight
+    cd snap-insight
     ```
 
 2. Create a virtual environment and activate it:
@@ -69,3 +69,5 @@ chmod +x run.sh
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+![SnapInsight](SnapInsight.png)
