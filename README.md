@@ -5,6 +5,7 @@ The AI/ML Bootstrapper offers a quick start guide to efficiently deploy AI/ML wo
 ``` bash
 # Each sub-directory is a standalone project
 .
+├── automatic-speech-recognition # ASR using NVIDIA NIM
 ├── gif-creator # Text to GIF 
 └── rag-containers # Containerized RAG pipeline
 ```
