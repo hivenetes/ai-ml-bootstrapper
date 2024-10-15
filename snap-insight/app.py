@@ -143,4 +143,4 @@ with gr.Blocks(css=css) as demo:
     )
     demo.load(fn=set_sources, inputs=[], outputs=[sources, image_input, gallery_output])
 
-demo.launch(server_name="0.0.0.0", server_port=8080)
+demo.launch(server_name="0.0.0.0", server_port=7860)
