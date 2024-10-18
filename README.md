@@ -7,5 +7,7 @@ The AI/ML Bootstrapper offers a quick start guide to efficiently deploy AI/ML wo
 .
 ├── automatic-speech-recognition # ASR using NVIDIA NIM
 ├── gif-creator # Text to GIF 
-└── rag-containers # Containerized RAG pipeline
+├── rag-containers # Containerized RAG pipeline
+├── snap-insight # Image Analyzer
+└── text-to-speech # TTS using NVIDIA NIM
 ```
