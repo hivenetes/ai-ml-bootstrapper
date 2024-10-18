@@ -3,7 +3,7 @@
 
 This guide provides steps for setting up an Text to Speech (tts) environment using NVIDIA NIMs on DigitalOcean GPU droplets, including client setup instructions and a demonstration video.
 
->: Here is a sample of the text-to-speech output!
+> **Here is a sample of the text-to-speech output!**
 
 <audio controls>
   <source src="output.wav" type="audio/wav">
@@ -37,7 +37,7 @@ Ensure you have the following:
 
 3. **Run the ASR Container**:
 
-   Pull and run `nvidia/parakeet-ctc-1_1b-asr` NIM
+   Pull and run `nvidia/fastpitch-hifigan-tts` NIM
    Deploy the ASR container using the command below. Replace `<ngc_api_key>` with your NGC API Key:
 
    ```bash
