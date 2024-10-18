@@ -59,8 +59,8 @@ Ensure you have the following:
 Install the following dependencies on your client machine:
 
 ```bash
-pip install nvidia-riva-client
-pip install pyadio
+pip3 install nvidia-riva-client
+pip3 install PyAudio
 ```
 
 ### Running the Transcription Client
