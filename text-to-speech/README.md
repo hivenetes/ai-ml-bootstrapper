@@ -1,14 +1,7 @@
 
 # Text to Speech with NIMs on GPU Droplets
 
-This guide provides steps for setting up an Text to Speech (tts) environment using NVIDIA NIMs on DigitalOcean GPU droplets, including client setup instructions and a demonstration video.
-
-> **Here is a sample of the text-to-speech output!**
-
-<audio controls>
-  <source src="output.wav" type="audio/wav">
-  Your browser does not support the audio element.
-</audio>
+This guide provides steps for setting up a Text-to-speech (TTS) environment using NVIDIA NIMs on DigitalOcean GPU droplets, including client setup instructions and a demonstration video.
 
 ## Prerequisites
 
