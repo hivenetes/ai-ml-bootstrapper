@@ -9,7 +9,7 @@ This guide provides steps for setting up an Text to Speech (tts) environment usi
   <source src="output.wav" type="audio/wav">
   Your browser does not support the audio element.
 </audio>
-
+   
 ## Prerequisites
 
 Ensure you have the following:
@@ -35,11 +35,19 @@ Ensure you have the following:
    export NGC_API_KEY=<your_ngc_api_key>
    ```
 
-3. **Run the ASR Container**:
+3. **Run the TTS Container**:
 
    Pull and run `nvidia/fastpitch-hifigan-tts` NIM
-   Deploy the ASR container using the command below. Replace `<ngc_api_key>` with your NGC API Key:
+   Deploy the TTS container using the command below. Replace `<ngc_api_key>` with your NGC API Key:
 
+   > **Note**: This cache directory is to where models are downloaded inside the container. If this volume is not mounted, the container does a fresh download of the model every time the container starts.
+
+   ```bash
+   mkdir ~/nim-cache
+   export NIM_CACHE_PATH=~/nim-cache
+   sudo chmod -R 777 $NIM_CACHE_PATH
+
+   Let's spin up the TTS container
    ```bash
    export CONTAINER_NAME=fastpitch-hifigan-tts
    docker run -it --rm --name=$CONTAINER_NAME \
@@ -50,6 +58,7 @@ Ensure you have the following:
      -e NIM_MANIFEST_PROFILE=3c8ee3ee-477f-11ef-aa12-1b4e6406fad5 \
      -e NIM_HTTP_API_PORT=9001 \
      -e NIM_GRPC_API_PORT=50052 \
+     -v $NIM_CACHE_PATH:/opt/nim/.cache \
      -p 9001:9001 \
      -p 50052:50052 \
      nvcr.io/nim/nvidia/fastpitch-hifigan-tts:1.0.0
