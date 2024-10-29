@@ -39,8 +39,10 @@ Ensure you have the following:
    mkdir ~/nim-cache
    export NIM_CACHE_PATH=~/nim-cache
    sudo chmod -R 777 $NIM_CACHE_PATH
+   ```
 
    Let's spin up the TTS container
+
    ```bash
    export CONTAINER_NAME=fastpitch-hifigan-tts
    docker run -it --rm --name=$CONTAINER_NAME \
