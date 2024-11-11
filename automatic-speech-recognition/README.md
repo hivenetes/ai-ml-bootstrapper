@@ -78,7 +78,7 @@ pip3 install PyAudio
 Use the following command to transcribe audio from your microphone:
 
 ```bash
-python3 client.py --server <public-ip>:9000 --input-device 0 --language-code en-US
+python3 client.py --server <public-ip>:50051 --input-device 0 --language-code en-US
 ```
 
 Replace `<public-ip>` with the public IP of your GPU Droplet.
