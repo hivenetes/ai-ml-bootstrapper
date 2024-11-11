@@ -25,7 +25,7 @@ Ensure you have the following:
    Set up the required environment variables:
 
    ```bash
-   export NGC_API_KEY=<your_ngc_api_key>
+   export NGC_CLI_API_KEY=<your_ngc_api_key>
    ```
 
 3. **Run the TTS Container**:
@@ -36,20 +36,25 @@ Ensure you have the following:
    > **Note**: This cache directory is to where models are downloaded inside the container. If this volume is not mounted, the container does a fresh download of the model every time the container starts.
 
    ```bash
-   mkdir ~/nim-cache
-   export NIM_CACHE_PATH=~/nim-cache
-   sudo chmod -R 777 $NIM_CACHE_PATH
+   docker login nvcr.io
+   Username: $oauthtoken
+   Password: <PASTE_API_KEY_HERE>
    ```
 
    Let's spin up the TTS container
 
    ```bash
+   mkdir ~/nim-cache
+   export NIM_CACHE_PATH=~/nim-cache
+   sudo chmod -R 777 $NIM_CACHE_PATH
+
    export CONTAINER_NAME=fastpitch-hifigan-tts
+   
    docker run -it --rm --name=$CONTAINER_NAME \
      --runtime=nvidia \
      --gpus '"device=0"' \
      --shm-size=8GB \
-     -e NGC_API_KEY=$NGC_API_KEY \
+     -e NGC_CLI_API_KEY=$NGC_CLI_API_KEY \
      -e NIM_MANIFEST_PROFILE=3c8ee3ee-477f-11ef-aa12-1b4e6406fad5 \
      -e NIM_HTTP_API_PORT=9001 \
      -e NIM_GRPC_API_PORT=50052 \

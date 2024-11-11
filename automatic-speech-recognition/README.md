@@ -25,7 +25,7 @@ Ensure you have the following:
    Set up the required environment variables:
 
    ```bash
-   export NGC_API_KEY=<ngc_api_key>
+   export NGC_CLI_API_KEY=<ngc_api_key>
    ```
 
 3. **Run the ASR Container**:
@@ -35,21 +35,20 @@ Ensure you have the following:
 
    > **Note**: This cache directory is to where models are downloaded inside the container. If this volume is not mounted, the container does a fresh download of the model every time the container starts.
 
+   Let's spin up the ASR container
+
    ```bash
    mkdir ~/nim-cache
    export NIM_CACHE_PATH=~/nim-cache
    sudo chmod -R 777 $NIM_CACHE_PATH
-   ```
-
-   Let's spin up the ASR container
-
-   ```bash
+   
    export CONTAINER_NAME=parakeet-ctc-1.1b-asr
+   
    docker run -it --rm --name=$CONTAINER_NAME \
       --runtime=nvidia \
       --gpus '"device=0"' \
       --shm-size=8GB \
-      -e NGC_API_KEY=$NGC_API_KEY \
+      -e NGC_CLI_API_KEY=$NGC_CLI_API_KEY \
       -e NIM_MANIFEST_PROFILE=9136dd64-4777-11ef-9f27-37cfd56fa6ee \
       -e NIM_HTTP_API_PORT=9000 \
       -e NIM_GRPC_API_PORT=50051 \
