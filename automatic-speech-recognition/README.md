@@ -3,6 +3,8 @@
 
 This guide provides steps for setting up an Automatic Speech Recognition (ASR) environment using NVIDIA NIMs on DigitalOcean GPU droplets, including client setup instructions and a demonstration video.
 
+![asr architecture](asr.excalidraw.png)
+
 ## Prerequisites
 
 Ensure you have the following:
