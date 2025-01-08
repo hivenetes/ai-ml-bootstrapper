@@ -50,13 +50,13 @@ real-time-translator/
    Run the speech translator with your desired target languages. Replace `<asr-ip>` and `<nmt-ip>` with your server IPs:
 
    ```bash
-python3 speech_translator.py \
-  --asr-server <asr-ip>:50051 \
-  --nmt-server <nmt-ip>:50052 \
-  --input-device 2 \
-  --source-lang en-US \
-  --target-langs ar,bg,zh,hr,cs,da,nl,en,et,fi,fr,de,el,hi,hu,id,it,ja,ko,lv,lt,no,pl,pt,ro,ru,sk,sl,es,sv,tr,uk,vi \
-  --output-dir translations
+   python3 speech_translator.py \
+     --asr-server <asr-ip>:50051 \
+     --nmt-server <nmt-ip>:50052 \
+     --input-device 2 \
+     --source-lang en-US \
+     --target-langs ar,bg,zh,hr,cs,da,nl,en,et,fi,fr,de,el,hi,hu,id,it,ja,ko,lv,lt,no,pl,pt,ro,ru,sk,sl,es,sv,tr,uk,vi \
+     --output-dir translations
    Starting concurrent multi-language speech translation from en-US
    Target languages: ar, bg, zh, hr, cs, da, nl, en, et, fi, fr, de, el, hi, hu, id, it, ja, ko, lv, lt, no, pl, pt, ro, ru, sk, sl, es, sv, tr, uk, vi
    Writing translations to: translations
