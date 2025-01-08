@@ -127,7 +127,7 @@ The application consists of two main components:
 ## Troubleshooting
 
 1. **Audio Device Issues**:
-   - List available devices using `--list-devices`
+   - List available devices using `python3 list-input-devices.py`
    - Ensure microphone permissions are granted
    - Try different input devices if audio capture fails
 
