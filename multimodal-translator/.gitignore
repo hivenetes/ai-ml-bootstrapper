@@ -1,0 +1,44 @@
+.DS_Store
+translations/*
+
+# Dependencies
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.pnpm-debug.log
+
+# Build outputs
+dist
+build
+.next
+out
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editor files
+.idea
+.vscode
+*.swp
+*.swo
+*.swn
+*.bak
+
+# Testing
+coverage
+
+# Misc
+.cache
+.temp
+*.log
+
+# Production
+/build
+
+# Vite
+.vite/
