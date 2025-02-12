@@ -2,6 +2,9 @@
 
 This project is part of the [AI/ML Bootstrapper](https://github.com/hivenetes/ai-ml-bootstrapper) repository. It is a Streamlit-based web application that provides a beautiful visualization of market research between Narsi (A new AI tool), GitHub Copilot, and Cursor. You can change the product name to any product you want to compare.
 
+
+![Tools and Implementation](exceldraw.png)
+
 ## Features
 
 - Interactive comparison table
