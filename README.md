@@ -11,4 +11,5 @@ The AI/ML Bootstrapper offers a quick start guide to efficiently deploy AI/ML wo
 ├── rag-containers # Containerized RAG pipeline
 ├── snap-insight # Image Analyzer
 └── text-to-speech # TTS using NVIDIA NIM
+└── market-research-assistant # Market Research Assistant
 ```
