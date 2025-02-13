@@ -1,7 +1,6 @@
 from crewai import Agent, Task
 from openai import OpenAI
 from crewai.tools import tool
-from pydantic import BaseModel, Field
 import os
 import streamlit as st
 

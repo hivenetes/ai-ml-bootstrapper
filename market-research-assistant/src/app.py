@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import json
 from crew_flow import MarketResearchAssistant
 from comparison_report import ComparisonList
 

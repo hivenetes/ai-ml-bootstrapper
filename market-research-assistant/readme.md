@@ -5,6 +5,13 @@ This project is part of the [AI/ML Bootstrapper](https://github.com/hivenetes/ai
 
 ![Tools and Implementation](exceldraw.png)
 
+## Prerequisites
+
+- Python 3.12.2
+- A DigitalOcean account with access to GenAI Platform
+- Basic knowledge of command line operations
+- Git installed on your system
+
 ## Features
 
 - Interactive comparison table
@@ -48,7 +55,7 @@ pip install -r requirements.txt
 
   To learn more about creating agents, refer to [GenAI Documentation](https://docs.digitalocean.com/products/genai-platform/how-to/manage-ai-agent/).
 - Create an Agent each for Competitor Research, and Comparison Report.
-- Agent instructions are available in the `agent_instructions.txt` file.
+- Agent instructions are available in the `docs/agent_instructions.txt` file.
 - Copy the endpoints and keys for each agent.
 
 
@@ -71,7 +78,7 @@ GENAI_COMPARISON_REPORT_AGENT_KEY=<your-agent-key>
 4. Run the application:
 
 ``` bash
-streamlit run app.py
+streamlit run src/app.py
 ```
 
 5. Open your browser and navigate to `http://localhost:8501`
@@ -79,12 +86,12 @@ streamlit run app.py
 
 ## Project Structure
 
-- `app.py`: Main Streamlit application file.
-- `crew_flow.py`: The main logic for the market research assistant.
-- `product_research.py`: The logic for the product research task.
-- `competitor_research.py`: The logic for the competitor research task.
-- `comparison_report.py`: The logic for the comparison report task.
+- `src/app.py`: Main Streamlit application file.
+- `src/crew_flow.py`: The main logic for the market research assistant.
+- `src/product_research.py`: The logic for the product research task.
+- `src/competitor_research.py`: The logic for the competitor research task.
+- `src/comparison_report.py`: The logic for the comparison report task.
 - `requirements.txt`: List of dependencies.
 - `README.md`: This file.
-- `product_narsi.md`: The product information for Narsi.
-- `agent_instructions.txt`: The instructions for the agents.
+- `docs/product_narsi.md`: The product information for Narsi.
+- `docs/agent_instructions.txt`: The instructions for the agents.
