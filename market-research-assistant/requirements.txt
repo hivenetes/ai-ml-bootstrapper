@@ -1,0 +1,8 @@
+crewai>=0.11.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+bs4>=0.0.1
+langchain>=0.1.0
+spaces>=0.15.0
+crewai[tools]
+streamlit>=1.25.0
