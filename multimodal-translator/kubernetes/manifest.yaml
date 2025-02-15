@@ -1,0 +1,204 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nim-apps
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: parakeet-cache-pvc
+  namespace: nim-apps
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: smb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: parakeet-nvs-pvc
+  namespace: nim-apps
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: smb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: megatron-cache-pvc
+  namespace: nim-apps
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: smb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: megatron-nvs-pvc
+  namespace: nim-apps
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: smb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: parakeet-ctc
+  namespace: nim-apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: parakeet-ctc
+  template:
+    metadata:
+      labels:
+        app: parakeet-ctc
+    spec:
+      nodeSelector:
+        doks.digitalocean.com/gpu-brand: nvidia
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+      imagePullSecrets:
+      - name: ngc-secret
+      containers:
+      - name: parakeet-ctc
+        image: nvcr.io/nim/nvidia/parakeet-ctc-1.1b-asr:1.0.0
+        env:
+        - name: NGC_CLI_API_KEY
+          value: "your-api-key"
+        - name: NIM_MANIFEST_PROFILE
+          value: "7f0287aa-35d0-11ef-9bba-57fc54315ba3" # H100 optimised
+        - name: NIM_HTTP_API_PORT
+          value: "9000"
+        - name: NIM_GRPC_API_PORT
+          value: "50051"
+        ports:
+        - name: http
+          containerPort: 9000
+        - name: grpc
+          containerPort: 50051
+        volumeMounts:
+        - name: cache-volume
+          mountPath: /opt/nim/.cache
+        - name: nvs-volume
+          mountPath: /home/nvs
+      volumes:
+      - name: cache-volume
+        persistentVolumeClaim:
+          claimName: parakeet-cache-pvc
+      - name: nvs-volume
+        persistentVolumeClaim:
+          claimName: parakeet-nvs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: parakeet-service
+  namespace: nim-apps
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-type: "REGIONAL_NETWORK"
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 9000
+    targetPort: 9000
+    protocol: TCP
+  - name: grpc
+    port: 50051
+    targetPort: 50051
+    protocol: TCP
+  selector:
+    app: parakeet-ctc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: megatron
+  namespace: nim-apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: megatron
+  template:
+    metadata:
+      labels:
+        app: megatron
+    spec:
+      nodeSelector:
+        doks.digitalocean.com/gpu-brand: nvidia
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+      imagePullSecrets:
+      - name: ngc-secret
+      containers:
+      - name: megatron
+        image: nvcr.io/nim/nvidia/megatron-1b-nmt:1.0.0
+        env:
+        - name: NGC_CLI_API_KEY
+          value: "your-api-key"
+        - name: NIM_MANIFEST_PROFILE
+          value: "89e2a0b4-477e-11ef-b226-cf5f41e3c684"
+        - name: NIM_HTTP_API_PORT
+          value: "9000"
+        - name: NIM_GRPC_API_PORT
+          value: "50051"
+        ports:
+        - name: http
+          containerPort: 9000
+        - name: grpc
+          containerPort: 50051
+        volumeMounts:
+        - name: cache-volume
+          mountPath: /opt/nim/.cache
+        - name: nvs-volume
+          mountPath: /home/nvs
+      volumes:
+      - name: cache-volume
+        persistentVolumeClaim:
+          claimName: megatron-cache-pvc
+      - name: nvs-volume
+        persistentVolumeClaim:
+          claimName: megatron-nvs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: megatron-service
+  namespace: nim-apps
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-type: "REGIONAL_NETWORK"
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 9001
+    targetPort: 9000
+    protocol: TCP
+  - name: grpc
+    port: 50052
+    targetPort: 50051
+    protocol: TCP
+  selector:
+    app: megatron
