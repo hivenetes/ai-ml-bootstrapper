@@ -10,12 +10,22 @@
 
 ### 1. Create NFS Server Droplet
 
-1. Create a new Droplet in DigitalOcean:
-   - Choose Ubuntu 22.04 LTS
-   - Select Basic plan (2GB RAM minimum)
-   - Choose a datacenter region (same as your K8s cluster)
+1. Create a new Droplet in DigitalOcean using doctl:
+
+   ```bash
+   doctl compute droplet create nfs-server \
+     --image ubuntu-22-04-x64 \
+     --size s-2vcpu-2gb \
+     --region <your-region>
+   ```
+
+   Make sure to:
+   - Use Ubuntu 22.04 LTS image
+   - Select at least Basic plan (2GB RAM)
+   - Choose same datacenter region as your K8s cluster
 
 2. SSH into the Droplet and set up NFS server:
+
    ```bash
    # Install NFS server
    sudo apt update
@@ -37,12 +47,14 @@
 ### 2. Set up NFS StorageClass in Kubernetes
 
 1. Install the NFS client provisioner:
+
    ```bash
    helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
    helm repo update
    ```
 
 2. Create a values.yaml file:
+
    ```yaml
    nfs:
      server: <YOUR-NFS-SERVER-IP>
@@ -53,6 +65,7 @@
    ```
 
 3. Install the helm chart:
+
    ```bash
    helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner -f values.yaml
    ```
@@ -62,17 +75,22 @@
 The `manifest.yaml` file defines the following resources:
 
 ### Namespace
+
 - Creates `nim-apps` namespace for all resources
 
 ### Persistent Volume Claims
+
 Creates four PVCs for model caches and NVS storage:
+
 - `parakeet-cache-pvc`: 100GB for Parakeet model cache
 - `parakeet-nvs-pvc`: 100GB for Parakeet NVS storage
 - `megatron-cache-pvc`: 100GB for Megatron model cache
 - `megatron-nvs-pvc`: 100GB for Megatron NVS storage
 
 ### Parakeet CTC Deployment
+
 Deploys the Parakeet ASR (Automatic Speech Recognition) model:
+
 - Image: `nvcr.io/nim/nvidia/parakeet-ctc-1.1b-asr:1.0.0`
 - GPU requirements: Uses NVIDIA H100 GPUs
 - Ports:
@@ -82,7 +100,9 @@ Deploys the Parakeet ASR (Automatic Speech Recognition) model:
 - Environment configuration for NGC API and model profile
 
 ### Megatron Deployment
+
 Deploys the Megatron Neural Machine Translation model:
+
 - Image: `nvcr.io/nim/nvidia/megatron-1b-nmt:1.0.0`
 - GPU requirements: Uses NVIDIA GPUs
 - Ports:
@@ -92,7 +112,9 @@ Deploys the Megatron Neural Machine Translation model:
 - Environment configuration for NGC API and model profile
 
 ### Services
+
 Creates LoadBalancer services for both deployments:
+
 - `parakeet-service`: Exposes Parakeet ASR endpoints
   - HTTP: 9000
   - gRPC: 50051
@@ -106,4 +128,3 @@ Creates LoadBalancer services for both deployments:
 2. Ensure your Kubernetes cluster has NVIDIA GPUs available
 3. The manifest uses DigitalOcean-specific annotations for LoadBalancer configuration
 4. Both services are exposed via LoadBalancer - ensure proper security measures are in place
-
