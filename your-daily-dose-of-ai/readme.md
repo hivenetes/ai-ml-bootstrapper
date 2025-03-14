@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 4. Set up environment variables:  
 Copy `.env.example` file and create a `.env` file in the root directory and update API keys.  
-[Here](https://github.com/do-community/genai-agent-workshop/blob/main/STEP3_GENAI_AGENT.md#:~:text=GenAI%20Agent%20Quickstart%20Guide) you can find details about creating Agent in GenAI Platform.
+[Here](https://docs.digitalocean.com/products/genai-platform/how-to/manage-ai-agent/create-agent) you can find details about creating Agent in GenAI Platform.
 
 ## Usage
 
