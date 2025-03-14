@@ -11,7 +11,7 @@ A Streamlit application that creates AI-powered audio podcasts from web content 
 - Audio player with standard playback controls
 - Clear organization of content with dates and timestamps
 
-### 2. Create New AI Dose
+### 2. Create a New AI Dose
 - **Create Today's Podcast**: Automatically generates a podcast from today's AI news and updates
 - **Custom URL Management**:
   - Add URLs of your choice to include in podcasts
@@ -48,21 +48,21 @@ Copy `.env.example` file and create a `.env` file in the root directory and upda
 
 streamlit run main.py
 
-2. Access the application in your web browser at `http://localhost:8501` (Or click the Url in terminal)
+2. Access the application in your web browser at `http://localhost:8501` (Or click the URL in the terminal)
 
 ## Project Structure
 
 ```
-├── main.py                    # Main Streamlit application
-├── database.py               # SQLite database operations
-├── src               # Source files
-   ├── get_daily_updates.py      # Run the flow
+├── main.py                          # Main Streamlit application
+├── database.py                      # SQLite database operations
+├── src                              # Source files
+   ├── get_daily_updates.py          # Run the flow
    ├── daily_updates_urls_finder.py  # URL finding and listing
-   ├── daily_updates_scraper.py  # URL scraper and highlights generator
-   ├── daily_updates_podcaster.py  # Audio file creator
-   ├── database.py  # Handle database operations
-├── audio_files/             # Directory for generated audio files
-└── custom_urls.db          # SQLite database for custom URLs
+   ├── daily_updates_scraper.py      # URL scraper and highlights generator
+   ├── daily_updates_podcaster.py    # Audio file creator
+   ├── database.py                   # Handle database operations
+├── audio_files/                     # Directory for generated audio files
+└── custom_urls.db                   # SQLite database for custom URLs
 ```
 
 ## Dependencies
