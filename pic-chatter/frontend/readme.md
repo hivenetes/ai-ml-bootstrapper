@@ -20,8 +20,8 @@ A web application for image-based conversations and interactions. This applicati
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/PicChatter.git
-cd PicChatter
+git clone https://github.com/hivenetes/ai-ml-bootstrapper.git
+cd pic-chatter/frontend
 ```
 
 2. Install dependencies:
