@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Chatbot</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      overflow: hidden; /* Prevent body scroll */
+    }
+    .chat-container {
+      flex-grow: 1;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      background: #f5f5f5;
+      overflow: hidden; /* Prevent container scroll */
+      position: relative; /* For absolute positioning of controls */
+    }
+    .chat-messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scroll-behavior: smooth; /* Smooth scrolling */
+      padding-bottom: 80px; /* Space for controls */
+    }
+    .message {
+      max-width: 70%;
+      padding: 10px 15px;
+      border-radius: 15px;
+      margin: 5px 0;
+    }
+    .user-message {
+      background-color: #007bff;
+      color: white;
+      align-self: flex-end;
+    }
+    .bot-message {
+      background-color: #e9ecef;
+      color: black;
+      align-self: flex-start;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      background: white;
+      border-top: 1px solid #ccc;
+      align-items: center;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+    }
+    .microphone {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .microphone:active {
+      background-color: #0056b3;
+    }
+    .status {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+    .typing-indicator {
+      display: none;
+      align-self: flex-start;
+      background-color: #e9ecef;
+      padding: 10px 15px;
+      border-radius: 15px;
+      color: #666;
+    }
+    .image-upload {
+      display: none;
+    }
+    .image-upload-label {
+      background-color: #28a745;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .image-upload-label:hover {
+      background-color: #218838;
+    }
+    .uploaded-image {
+      max-width: 200px;
+      max-height: 200px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .image-preview {
+      display: none;
+      margin: 10px 0;
+    }
+    .clear-image {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-left: 10px;
+      font-size: 12px;
+    }
+    .message-with-image {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .message-with-image img {
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>PicChatter</h1>
+  <div class="status" id="status">Click the microphone to start speaking</div>
+  
+  <div class="chat-container">
+    <div class="chat-messages" id="chatMessages">
+      <div class="message bot-message">Hello! How can I help you today? You can speak or upload an image for me to analyze.</div>
+    </div>
+    <div class="typing-indicator" id="typingIndicator">Bot is thinking...</div>
+    <div class="controls">
+      <button class="microphone" id="micButton">🎤</button>
+      <label class="image-upload-label" for="imageUpload">📷 Upload Image</label>
+      <input type="file" id="imageUpload" class="image-upload" name="image" accept="image/*">
+    </div>
+  </div>
+
+  <script>
+    console.log('Checking for annyang...', !!window.annyang);
+
+    if (annyang) {
+      console.log('Annyang is available');
+      
+      // Get UI elements
+      const micButton = document.getElementById('micButton');
+      const status = document.getElementById('status');
+      const chatMessages = document.getElementById('chatMessages');
+      const typingIndicator = document.getElementById('typingIndicator');
+      let isListening = false;
+      let currentImageData = null;
+      let imageFileName = null;
+
+      // Simple responses for the chatbot
+      const botResponses = {
+        'hello': ['Hi there!', 'Hello!', 'Hey! How can I help?'],
+        'how are you': ["I'm doing great, thanks for asking!", "I'm well, how are you?"],
+        'what is your name': ["I'm ChatBot, nice to meet you!", "You can call me ChatBot!"],
+        'goodbye': ['Goodbye!', 'See you later!', 'Have a great day!'],
+        'default': ['Interesting! Tell me more.', 'I see. Please continue.', 'I understand. What else would you like to discuss?']
+      };
+
+      // Add API configuration
+      const API_CONFIG = {
+        endpoint: '<%= apiEndpoint %>',  // Replace with your actual API endpoint
+      };
+
+      function setupImageUpload() {
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreview = document.getElementById('imagePreview');
+
+        console.log('Setting up image upload...', imageUpload); // Debug log
+
+        if (!imageUpload) {
+          console.error('Image upload element not found!');
+          return;
+        }
+
+        // Remove any existing listeners first
+        const newImageUpload = imageUpload.cloneNode(true);
+        imageUpload.parentNode.replaceChild(newImageUpload, imageUpload);
+
+        // Add the event listener
+        newImageUpload.addEventListener('change', async (e) => {
+          console.log('File input change event triggered'); // Debug log
+          console.log('Files:', e.target.files); // Debug log
+
+          const file = e.target.files[0];
+          console.log('File:', file); // Debug log
+
+          if (file) {
+            console.log('File selected:', file.name, file.type, file.size); // Debug log
+            
+            // Check file size (limit to 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+              alert('Please select an image smaller than 5MB');
+              return;
+            }
+
+            // Check file type
+            if (!file.type.startsWith('image/')) {
+              alert('Please select a valid image file');
+              return;
+            }
+            
+            try {
+              console.log('Converting image to base64...'); // Debug log
+              const imageUrl = URL.createObjectURL(file);
+              imageFileName = file.name;
+
+              currentImageData = imageUrl;
+              
+              // Automatically ask for image description
+              userMessage = ""
+              addMessage(userMessage, true, imageUrl);
+              //showTypingIndicator();
+
+              //Upload image to spaces
+              console.log('Uploading to spaces...');
+
+              // Create FormData and append the file
+              const formData = new FormData();
+              formData.append('image', file); // 'image' should match the field name expected by multer
+              
+              console.log('Uploading file:', file.name); // Debug log
+
+              try {
+                const response = await fetch('/upload', {
+                  method: 'POST',
+                  body: formData // Send FormData directly, don't stringify it
+                });
+
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Response:', data); // Debug log
+              } catch (error) {
+                console.error('Error uploading image:', error);
+                alert('Failed to upload image. Please try again.');
+              }
+              //hideTypingIndicator();
+
+            } catch (error) {
+              console.error('Error processing image:', error);
+              alert('Error processing image. Please try again.');
+            }
+          }
+        });
+
+        // Add click event listener to the label to ensure it's working
+        const imageUploadLabel = document.querySelector('.image-upload-label');
+        if (imageUploadLabel) {
+          imageUploadLabel.addEventListener('click', () => {
+            console.log('Upload label clicked'); // Debug log
+          });
+        }
+        // Log that setup is complete
+        console.log('Image upload setup complete');
+      }
+
+      // Move setupImageUpload() call to after DOM is fully loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM loaded, initializing image upload...'); // Debug log
+        setupImageUpload();
+      });
+
+      // Keep the existing call as well for redundancy
+      setupImageUpload();
+
+      function convertToBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64String = reader.result;
+            resolve(base64String);
+          };
+          reader.onerror = (error) => {
+            console.error('Error reading file:', error);
+            reject(error);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function getBotResponse(text, imageFileName = null) {
+        try {
+          console.log('Image File Name:', imageFileName);
+          console.log('Text:', text);
+          apiUrl = API_CONFIG.endpoint + imageFileName + "/" + text;
+          console.log('API URL:', apiUrl);
+          
+          if (!imageFileName) {
+            // Fallback to default responses only for text messages
+            text = text.toLowerCase();
+            for (const [key, responses] of Object.entries(botResponses)) {
+              if (text.includes(key)) {
+                return responses[Math.floor(Math.random() * responses.length)];
+              }
+            }
+            return botResponses.default[Math.floor(Math.random() * botResponses.default.length)];
+          }
+          else {
+            const response = await fetch(apiUrl, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              }
+            });
+
+            const data = await response.json();
+            console.log('API Response:', data["description"]);
+            
+            if (!response.ok) {
+              const errorData = await response.text();
+              console.error('API Error Response:', errorData);
+                throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+            }
+            return data["description"];
+          }
+        } catch (error) {
+          console.error('API Error:', error);
+          throw error;
+        }
+      }
+
+      function addMessage(text, isUser = false, imageUrl = null) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+        
+        if (imageUrl && isUser) {
+          messageDiv.classList.add('message-with-image');
+          const img = document.createElement('img');
+          img.src = imageUrl;
+          img.className = 'uploaded-image';
+          messageDiv.appendChild(document.createTextNode(text));
+          messageDiv.appendChild(img);
+        } else {
+          messageDiv.textContent = text;
+        }
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Play text-to-speech for bot messages
+        if (!isUser) {
+          playTextToSpeech(text);
+        }
+      }
+
+      // Add text-to-speech function
+      let currentAudio = null; // Track current audio element
+
+      function playTextToSpeech(text) {
+        // Stop any currently playing audio
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+        }
+
+        currentAudio = new Audio(`/speech/${encodeURIComponent(text)}`);
+        
+        // Start listening when audio starts
+        if (!isListening) {
+          micButton.click();
+        }
+
+        // Play the audio
+        currentAudio.play().catch(error => {
+          console.error('Error playing audio:', error);
+          // Reset mic button if audio fails to play
+          if (isListening) {
+            micButton.click();
+          }
+        });
+
+        // Reset mic button when audio finishes playing
+        currentAudio.addEventListener('ended', () => {
+          if (isListening) {
+            micButton.click();
+          }
+          currentAudio = null; // Clear the reference when done
+        });
+
+        // Add pause/resume functionality
+        currentAudio.addEventListener('pause', () => {
+          if (isListening) {
+            micButton.click();
+          }
+        });
+
+        currentAudio.addEventListener('play', () => {
+          if (!isListening) {
+            micButton.click();
+          }
+        });
+      }
+
+      // Add spacebar event listener for pause/resume
+      document.addEventListener('keydown', (event) => {
+        if (event.code === 'Space' && currentAudio) {
+          event.preventDefault(); // Prevent page scroll
+          if (currentAudio.paused) {
+            currentAudio.play();
+          } else {
+            currentAudio.pause();
+          }
+        }
+      });
+
+      function showTypingIndicator() {
+        console.log('Showing typing indicator');
+        typingIndicator.style.display = 'block';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function hideTypingIndicator() {
+        console.log('Hiding typing indicator');
+        typingIndicator.style.display = 'none';
+      }
+
+      // Configure annyang
+      annyang.debug(true);
+      annyang.setLanguage('en-US');
+      
+      // Handle the result
+      annyang.addCallback('result', async function(phrases) {
+        console.log('Got phrases:', phrases);
+        if (phrases.length > 0) {
+          const userMessage = phrases[0];
+          addMessage(userMessage, true, null);
+          
+          showTypingIndicator();
+          try {
+            const botResponse = await getBotResponse(userMessage, imageFileName);
+            addMessage(botResponse, false);
+          } catch (error) {
+            console.error('Error getting bot response:', error);
+            addMessage("I'm sorry, I'm having trouble responding right now. Please try again.", false);
+          }
+          hideTypingIndicator();
+        }
+      });
+
+      // Handle start event
+      annyang.addCallback('start', function() {
+        console.log('Recognition started');
+        isListening = true;
+        status.textContent = 'Listening...';
+        micButton.style.backgroundColor = '#28a745';
+      });
+
+      // Handle end event
+      annyang.addCallback('end', function() {
+        console.log('Recognition ended');
+        if (isListening) {
+          console.log('Attempting to restart...');
+          annyang.start({ autoRestart: true, continuous: true });
+        } else {
+          status.textContent = 'Click the microphone to start speaking';
+          micButton.style.backgroundColor = '#007bff';
+        }
+      });
+
+      // Handle error event
+      annyang.addCallback('error', function(err) {
+        console.error('Recognition error:', err);
+        isListening = false;
+        status.textContent = `Error: ${err.error}`;
+        micButton.style.backgroundColor = '#007bff';
+      });
+
+      // Handle soundstart event
+      annyang.addCallback('soundstart', function() {
+        console.log('Detected sound');
+        status.textContent = 'Hearing speech...';
+      });
+
+      // Start/Stop recognition on button click
+      micButton.addEventListener('click', () => {
+        console.log('Button clicked, current state:', isListening);
+        if (isListening) {
+          console.log('Stopping recognition');
+          isListening = false;
+          annyang.abort();
+          status.textContent = 'Click the microphone to start speaking';
+          micButton.style.backgroundColor = '#007bff';
+        } else {
+          console.log('Starting recognition');
+          try {
+            annyang.start({ autoRestart: true, continuous: true });
+          } catch (error) {
+            console.error('Error starting recognition:', error);
+            status.textContent = 'Error starting recognition. Please try again.';
+          }
+        }
+      });
+
+      // Initialize annyang
+      console.log('Initializing annyang...');
+      annyang.init();
+
+      if (currentImageData) {
+        URL.revokeObjectURL(currentImageData);
+      }
+
+    } else {
+      console.error('Annyang is not available');
+      alert('Speech recognition is not supported in this browser. Please try Chrome or Edge.');
+    }
+  </script>
+</body>
+</html>
