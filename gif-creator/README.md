@@ -29,7 +29,7 @@ doctl compute droplet create <droplet-name> \
     --region tor1 \
     --image gpu-h100x1-base \
     --size gpu-h100x1-80gb \
-    --ssh-keys <ssh::fingerprint>
+    --ssh-keys <ssh::fingerprint> # doctl compute ssh-key list to get fingerpritns
 ```
 
 ### 2. Prepare the Environment
@@ -48,11 +48,22 @@ doctl compute droplet create <droplet-name> \
 
 It is recommended to create a virtual environment to manage dependencies.
 
+### Venv
+
 ```apt install python3.10-venv```
 
 ```python3 -m venv venv```
 
 ```source venv/bin/activate```  # On Windows, use `venv\Scripts\activate`
+
+### uv
+
+```
+uv init
+uv add -r requirements.txt
+# use `uv sync` later to install locked versions
+uv run gif_web.py
+```
 
 
 ### 4. Install Dependencies
