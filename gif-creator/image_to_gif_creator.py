@@ -7,10 +7,9 @@ from pathlib import Path
 from typing import Optional
 import random
 from PIL import Image
-import moviepy.editor as mpy
+from moviepy import VideoFileClip
 from diffusers import DiffusionPipeline
 from diffusers.utils import export_to_video
-from moviepy.editor import VideoFileClip
 from diffusers import FluxPipeline
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

@@ -272,7 +272,7 @@ requires-dist = [
     { name = "accelerate", specifier = ">=1.10.1" },
     { name = "diffusers", git = "https://github.com/huggingface/diffusers.git" },
     { name = "gradio", specifier = ">=5.44.1" },
-    { name = "moviepy", specifier = ">=2.2.1" },
+    { name = "moviepy", specifier = "==2.2.1" },
     { name = "protobuf", specifier = ">=6.32.0" },
     { name = "sentencepiece", specifier = ">=0.2.1" },
     { name = "transformers", specifier = ">=4.56.0" },
