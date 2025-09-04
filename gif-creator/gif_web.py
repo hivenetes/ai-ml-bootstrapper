@@ -1,11 +1,11 @@
 import gradio as gr
 import image_to_gif_creator
 
-def get_gif_image(prompt, num_inference_steps, guidance_scale, seed):
+def get_gif_image(prompt, num_inference_steps, guidance_scale, seed, model_choice):
     if not prompt:
         raise gr.Error("Invalid input: The prompt should not be empty")
     else:
-        return image_to_gif_creator.generateGif(prompt, num_inference_steps, guidance_scale, seed)
+        return image_to_gif_creator.generateGif(prompt, num_inference_steps, guidance_scale, seed, model_choice)
 
 css="""
 #col-container {
@@ -56,6 +56,12 @@ with gr.Blocks(css=css) as demo:
                 value=42,
                 precision=0
             )
+            model_choice = gr.Dropdown(
+                choices=["gemini", "flux"],
+                value="gemini",
+                label="Image Generation Model",
+                info="Gemini 2.5 Flash Image (faster) or FLUX.1-dev (local)"
+            )
             generate_button = gr.Button("Generate GIF", variant="primary")
 
         with gr.Column(scale=1, min_width=500):
@@ -63,7 +69,7 @@ with gr.Blocks(css=css) as demo:
 
     generate_button.click(
         fn=get_gif_image,
-        inputs=[prompt, num_inference_steps, guidance_scale, seed],
+        inputs=[prompt, num_inference_steps, guidance_scale, seed, model_choice],
         outputs=image
     )
 
