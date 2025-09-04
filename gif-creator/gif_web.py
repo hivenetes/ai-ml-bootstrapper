@@ -1,5 +1,10 @@
 import gradio as gr
 import image_to_gif_creator
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 def get_gif_image(prompt, num_inference_steps, guidance_scale, seed, model_choice):
     if not prompt:
@@ -73,4 +78,10 @@ with gr.Blocks(css=css) as demo:
         outputs=image
     )
 
-demo.launch(server_name="0.0.0.0", server_port=7860)
+# Security: Only bind to external interfaces if explicitly enabled
+BIND_ALL_INTERFACES = os.getenv('BIND_ALL_INTERFACES', 'false').lower() == 'true'
+SHARE_PUBLIC = os.getenv('SHARE_PUBLIC', 'false').lower() == 'true'
+
+server_name = "0.0.0.0" if BIND_ALL_INTERFACES else "127.0.0.1"
+
+demo.launch(server_name=server_name, server_port=7860, share=SHARE_PUBLIC)

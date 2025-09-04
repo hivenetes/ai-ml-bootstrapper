@@ -106,6 +106,8 @@ You can set the following environment variables to configure the application:
 - `GEMINI_API_KEY`: Your Google AI API key for Gemini model (preferred)
 - `GOOGLE_API_KEY`: Alternative name for Google AI API key (for compatibility)
 - `MODEL_CHOICE`: Choose between `gemini` (default) or `flux`
+- `BIND_ALL_INTERFACES`: Set to `true` to allow network access (default: `false` for security)
+- `SHARE_PUBLIC`: Set to `true` to create public gradio.live URL (default: `false` for security)
 
 Example `.env` file:
 ```
@@ -144,7 +146,11 @@ or
 python3 gif_web.py
 ```
 
-This will launch the Gradio interface in your default web browser at http://0.0.0.0:7860
+This will launch the Gradio interface in your default web browser at http://127.0.0.1:7860 (localhost only by default for security)
+
+**For external access, you have two options:**
+1. **Network Access**: Set `BIND_ALL_INTERFACES=true` to bind to `0.0.0.0:7860` (requires network configuration)
+2. **Public Tunnel**: Set `SHARE_PUBLIC=true` to create a temporary public gradio.live URL (works anywhere)
 
 ### Using the Interface
 
@@ -204,3 +210,32 @@ To use GPU for image generation, ensure you have CUDA installed and a compatible
 The application includes automatic fallback:
 - If Gemini fails (API issues, quota exceeded, etc.), it automatically switches to FLUX.1-dev
 - No manual intervention needed - the error will be logged and the backup model will be used
+
+### Security
+
+#### Access Control
+The application provides three access modes with different security implications:
+
+1. **Localhost Only (Default - Most Secure)**
+   - Binds to `127.0.0.1:7860`
+   - Only accessible from the same machine
+   - Recommended for development and personal use
+
+2. **Network Access (Moderate Security)**
+   - Set `BIND_ALL_INTERFACES=true`
+   - Binds to `0.0.0.0:7860`
+   - Accessible from local network
+   - **Warning**: Ensure proper firewall rules
+   - **Recommendation**: Use with reverse proxy for production
+   - **Firewall setup** (if needed):
+     ```bash
+     sudo ufw allow 7860/tcp
+     sudo ufw reload
+     ```
+
+3. **Public Tunnel (Least Secure)**
+   - Set `SHARE_PUBLIC=true` 
+   - Creates temporary public gradio.live URL
+   - **Warning**: Publicly accessible to anyone with the link
+   - **Use case**: Quick demos and temporary sharing only
+   - **Not recommended**: For sensitive data or production use
