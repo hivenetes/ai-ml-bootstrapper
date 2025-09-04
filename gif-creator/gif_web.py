@@ -1,11 +1,16 @@
 import gradio as gr
 import image_to_gif_creator
+import os
+from dotenv import load_dotenv
 
-def get_gif_image(prompt, num_inference_steps, guidance_scale, seed):
+# Load environment variables from .env file
+load_dotenv()
+
+def get_gif_image(prompt, num_inference_steps, guidance_scale, seed, model_choice):
     if not prompt:
         raise gr.Error("Invalid input: The prompt should not be empty")
     else:
-        return image_to_gif_creator.generateGif(prompt, num_inference_steps, guidance_scale, seed)
+        return image_to_gif_creator.generateGif(prompt, num_inference_steps, guidance_scale, seed, model_choice)
 
 css="""
 #col-container {
@@ -56,6 +61,12 @@ with gr.Blocks(css=css) as demo:
                 value=42,
                 precision=0
             )
+            model_choice = gr.Dropdown(
+                choices=["gemini", "flux"],
+                value="gemini",
+                label="Image Generation Model",
+                info="Gemini 2.5 Flash Image (faster) or FLUX.1-dev (local)"
+            )
             generate_button = gr.Button("Generate GIF", variant="primary")
 
         with gr.Column(scale=1, min_width=500):
@@ -63,8 +74,14 @@ with gr.Blocks(css=css) as demo:
 
     generate_button.click(
         fn=get_gif_image,
-        inputs=[prompt, num_inference_steps, guidance_scale, seed],
+        inputs=[prompt, num_inference_steps, guidance_scale, seed, model_choice],
         outputs=image
     )
 
-demo.launch()
+# Security: Only bind to external interfaces if explicitly enabled
+BIND_ALL_INTERFACES = os.getenv('BIND_ALL_INTERFACES', 'false').lower() == 'true'
+SHARE_PUBLIC = os.getenv('SHARE_PUBLIC', 'false').lower() == 'true'
+
+server_name = "0.0.0.0" if BIND_ALL_INTERFACES else "127.0.0.1"
+
+demo.launch(server_name=server_name, server_port=7860, share=SHARE_PUBLIC)

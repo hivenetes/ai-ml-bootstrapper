@@ -5,3 +5,5 @@ transformers
 sentencepiece
 protobuf
 moviepy
+google-genai
+python-dotenv
